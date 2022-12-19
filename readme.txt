@@ -1,3 +1,6 @@
+
+
+.......Install Dependencies First .....
 yarn add react-native-touch-id
 yarn add react-native-contacts
 yarn add react-native-date-picker
