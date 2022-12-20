@@ -1,12 +1,12 @@
 import {
   useRef, useEffect, useState
 } from 'react';
-import { View, Text, TextInput, Button, TouchableOpacity, StyleSheet, StatusBar,Modal,Pressable } from 'react-native';
+import { View, Text, TextInput, Button, TouchableOpacity, StyleSheet, StatusBar, Modal, Pressable } from 'react-native';
 import DatePicker from "react-native-date-picker";
 
 // import Contacts from "react-native-contacts";
-import { Dropdown } from 'react-native-element-dropdown';
 import Icon from 'react-native-vector-icons/Ionicons';
+import DropDownList from './Component/dropdown';
 import CameraModal from './Component/modal';
 
 
@@ -17,7 +17,7 @@ const Student = () => {
   const mobile = useRef();
   const gender = useRef('Male');
   const fee = useRef();
-  const cash = useRef();
+  const cash = useRef('Pending');
   const batch = useRef();
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState(new Date());
@@ -51,30 +51,6 @@ const Student = () => {
 
 
 
-  const renderItem = (item) => {
-    return (
-      <View style={{
-        padding: 17,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      }}>
-        <Text style={{
-          flex: 1,
-          fontSize: 16,
-          color: 'black',
-        }}>{item.value}</Text>
-        <Icon
-          style={{
-            marginRight: 5,
-          }}
-          color="black"
-          name={item.icon}
-          size={20}
-        />
-      </View>
-    );
-  };
 
 
 
@@ -83,15 +59,14 @@ const Student = () => {
       <Text style={styles.studenttext}>Add Student </Text>
 
       {/* image button */}
-      <View style={styles.imagebutton}>
+      <View style={styles.imagebuttonContainer}>
         <TouchableOpacity
-          style={styles.button}
+          style={styles.imagebutton}
           onPress={() => {
             setModalVisible(true);
           }}
         >
-          <Icon name="camera" size={30} color="black" />
-          <Text style={styles.textStyle}>Add Image</Text>
+          <Icon name="person-add-outline" size={30} color="black" />
         </TouchableOpacity>
       </View>
 
@@ -107,51 +82,46 @@ const Student = () => {
       />
 
       <View>
-      <TextInput
-        placeholder="Fee"
-        ref={fee}
-        style={styles.input}
+        <TextInput
+          placeholder="Fee"
+          ref={fee}
+          style={styles.input}
         />
-        <Pressable
-          style={[styles.button, styles.buttonClose]}
-          onPress={() => setModalVisible(!modalVisible)}
-        >
-          <Text style={styles.textStyle}>Yearly</Text>
-        </Pressable>
-        <Pressable
-          style={[styles.button, styles.buttonClose]}
-          onPress={() => setModalVisible(!modalVisible)}
-        >
-          <Text style={styles.textStyle}>Monthly</Text>
-        </Pressable>
-        
+        <View style={styles.premium}>
+
+          <Pressable
+            style={[styles.button, styles.buttonClose]}
+            onPress={() => setModalVisible(!modalVisible)}
+          >
+            <Text style={styles.textStyle}>Yearly</Text>
+          </Pressable>
+          <Pressable
+            style={[styles.button, styles.buttonClose]}
+            onPress={() => setModalVisible(!modalVisible)}
+          >
+            <Text style={styles.textStyle}>Monthly</Text>
+          </Pressable>
         </View>
-      <Dropdown
-        style={styles.dropdown}
-        placeholder="Select Payment Mode"
-        placeholderStyle={styles.dropdownFontColor}
 
-        itemTextStyle={styles.dropdownFontColor}
-        selectedTextStyle={styles.dropdownFontColor}
-        data={payment_type}
-        value={cash}
-        onChange={(value) => {
-          cash.current.value = value;
-        }}
-        maxHeight={300}
-        labelField="label"
-        valueField="value"
-        searchPlaceholder="Search..."
+      </View>
 
-        renderItem={renderItem}
-      />
+      <View style={styles.payemntView}>
+        <DropDownList
+          style={styles.dropdown}
+          dropdownFontColor={styles.dropdownFontColor}
+          list={payment_type}
+          placeholderStyle={styles.dropdownFontColor}
+          value={cash}
+          key={"payment_type"}
+        />
 
 
-      <TextInput
-        placeholder="Batch Code"
-        ref={batch}
-        style={styles.input}
-      />
+        <TextInput
+          placeholder="Batch Code"
+          ref={batch}
+          style={styles.input}
+        />
+      </View>
       <TouchableOpacity onPress={
         () => {
           setOpen(true);
@@ -178,35 +148,13 @@ const Student = () => {
         }}
       />
 
-      <Dropdown
+      <DropDownList
         style={styles.dropdown}
+        dropdownFontColor={styles.dropdownFontColor}
+        list={gender_list}
         placeholderStyle={styles.dropdownFontColor}
-
-        itemTextStyle={styles.dropdownFontColor}
-        selectedTextStyle={styles.dropdownFontColor}
-        iconStyle={styles.iconStyle}
-        data={gender_list}
-        // search
-        maxHeight={300}
-        placeholder={gender.current.valueOf()}
-        valueField='value'
-        labelField='label'
-
         value={gender}
-        onChange={item => {
-          gender.current.value = item.value;
-          console.log(batch.current.value);
-
-        }}
-
-        renderItem={renderItem}
-
-        renderRightIcon={() => {
-          return (
-            <Icon name="chevron-down-outline" size={20} color="black" />
-          );
-        }}
-
+        key={"gender"}
       />
       <TouchableOpacity
 
@@ -216,7 +164,7 @@ const Student = () => {
 
       </TouchableOpacity>
 
-      <CameraModal setModalVisible={setModalVisible} modalVisible={modalVisible}/>
+      <CameraModal setModalVisible={setModalVisible} modalVisible={modalVisible} />
     </View>
 
   );
@@ -257,8 +205,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 10,
   },
+  payemntView: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   dropdown: {
-    width: "100%",
+    width: "50%",
     height: 50,
     backgroundColor: "white",
     borderRadius: 5,
@@ -271,11 +225,37 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     paddingBottom: 5,
     color: "black",
+
   },
   dropdownFontColor: {
     color: "black",
   },
+  imagebuttonContainer: {
+    display: "flex",
+    justifyContent: 'center',
+    alignItems: 'center',
+
+  },
+  imagebutton: {
+    display: "flex",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: "rgba(199,195,201,0.5)",
+    height: 150,
+    width: 150,
+    margin: 10,
+    borderRadius: 100,
+  },
+  premium: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: 120,
+    marginLeft: 10,
+    marginBottom: 10,
+    borderRadius: 10,
+  },
 
 
-  
 });
