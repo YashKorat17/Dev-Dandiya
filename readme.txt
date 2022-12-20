@@ -1,4 +1,5 @@
 React Native App for Android and iOS
+npm install --global yarn
 .......Install Dependencies First .....
 yarn add react-native-touch-id
 yarn add react-native-contacts
