@@ -6,6 +6,7 @@ import DatePicker from "react-native-date-picker";
 import Icon from 'react-native-vector-icons/Ionicons';
 import DropDownList from './Component/dropdown';
 import ModalPage from './Component/ModalPage';
+import axios from 'axios';
 
 
 const Student = ({navigation,route}) => {
@@ -15,7 +16,7 @@ const Student = ({navigation,route}) => {
   const gender = useRef('Male');
   const fee = useRef();
   const cash = useRef('Pending');
-  const batch = useRef();
+  const [batch, setBatch] = useState('');
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState(new Date());
   const [modalVisible, setModalVisible] = useState(false);
@@ -52,6 +53,22 @@ const [image,setImage] = useState(null);
       console.log(route.params?.image); 
     }
   }, [route.params?.image]);
+
+  useEffect(() => {
+    loaddata();
+  }, []);
+  
+
+  const loaddata = async() => {
+    await axios.get('http://192.168.1.204:8000/api/v1/studentdata/batch')
+      .then((res) => {
+        setBatch(res.data["batch"]);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+    }
+
 
 
 
@@ -138,12 +155,13 @@ const [image,setImage] = useState(null);
 
         <TextInput
           placeholder="Batch Code"
-          ref={batch}
+          value={batch}
           style={[styles.batchcodeinput, { borderColor: hover == 'batch' ? "rgba(110, 5, 166,1)" : '#000',borderWidth:hover == 'batch' ? 2 : 1 }]}
           placeholderTextColor="#000"
           onFocus={() => setHover('batch')}
           onBlur={() => setHover('')}
-        />
+          onChangeText={(text) => setBatch(text)}
+/>
       </View>
       <View style={styles.datepicker}>
 
